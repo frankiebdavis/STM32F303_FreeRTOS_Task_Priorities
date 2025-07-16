@@ -1,140 +1,126 @@
 # 🧠 FreeRTOS Task Scheduling Demo – STM32F303RE
 
-This project demonstrates how **FreeRTOS** enables multitasking on the STM32F303RE Nucleo board. It highlights how task priorities and scheduling policies can be used to control task behavior — something that isn't possible with traditional sequential microcontroller code.
+This project showcases the power of **FreeRTOS** on the STM32F303RE Nucleo board. It demonstrates how real-time operating systems enable multitasking and priority-based scheduling — capabilities that are difficult or impossible to achieve in bare-metal embedded systems.
 
-Whether you're building real-time systems or trying to improve embedded firmware structure, this project serves as a practical showcase of why RTOS-based development is a step above bare-metal looping.
+Whether you're new to RTOS concepts or demonstrating proficiency to employers, this project highlights core FreeRTOS functionality in a clear and modular way.
 
 ---
 
 ## 🎯 Project Goal
 
-To demonstrate how FreeRTOS enables:
+To demonstrate the versatility of FreeRTOS through:
 
-- Cooperative multitasking using delays
-- Controlled task scheduling through priority settings
-- Task management features like runtime termination
+- Cooperative multitasking using `osDelay()`
+- Task priority control and preemption
+- Runtime task termination from another task
 
 ---
 
 ## 🔧 Hardware Used
 
-- STM32F303RE Nucleo Board  
-- USB cable for power/debug (ST-Link interface)  
-- Host PC running STM32CubeIDE  
+- **STM32F303RE** Nucleo Board  
+- **ST-Link** USB interface (for power, programming, and debugging)  
+- **Host PC** running **STM32CubeIDE**
 
 ---
 
-## 🚦 What This Project Does
+## 🚦 How It Works
 
-This demo uses **two FreeRTOS tasks**, `Task1` and `Task2`, that each print a line to the debug console. Depending on how task priorities are configured or modified, the output behavior changes.
+The project defines two tasks, `Task1` and `Task2`, both of which print to the **ITM/SWO debug console** using `printf()` routed through `ITM_SendChar()`. Their priorities and behavior are adjusted to demonstrate three different scheduling outcomes.
 
-The output is captured using **ITM/SWO print debugging** — viewable in STM32CubeIDE under the SWV ITM Console.
-
----
-
-## 📊 Demo Scenarios
-
-### ✅ 1. **Default: Task1 Runs First**
-- `Task1`: priorityNormal  
-- `Task2`: priorityLow
-
-🔁 Output:
-```
-Task 1
-Task 2
-Task 1
-Task 2
-...
-```
-
-This shows how higher-priority tasks preempt lower ones, but both still share time via `osDelay()`.
-
----
-
-### ✅ 2. **Priority Flip: Task2 Runs First**
-- `Task1`: priorityLow  
-- `Task2`: priorityNormal
-
-🔁 Output:
-```
-Task 2
-Task 1
-Task 2
-Task 1
-...
-```
-
-A simple priority change completely reverses the execution order — no changes needed to task logic itself.
-
----
-
-### ✅ 3. **Task2 Terminates Task1**
-Inside `Task2`, we call `osThreadTerminate(Task1Handle);` after the first round.
-
-🔁 Output:
-```
-Task 1
-Task 2
-Task 2
-Task 2
-...
-```
-
-This demonstrates how FreeRTOS allows one task to control another — enabling dynamic behavior that isn’t possible in a blocking `while(1)` loop model.
-
----
-
-## 💻 How It Works
-
-Tasks are created in `main.c` using `osThreadNew()` with assigned priorities. Each task prints its name and delays for 1 second.
+Task creation in `main.c`:
 
 ```c
 Task1Handle = osThreadNew(StartTask1, NULL, &Task1_attributes);
 Task2Handle = osThreadNew(StartTask2, NULL, &Task2_attributes);
 ```
 
-Inside each task function:
+---
 
-```c
-void StartTask1(void *argument) {
-    for (;;) {
-        printf("Task 1\n");
-        osDelay(1000);
-    }
-}
+## 📊 Demo Scenarios
+
+### ✅ Scenario 1: Task1 Has Higher Priority
+
+- `Task1`: `osPriorityNormal`  
+- `Task2`: `osPriorityLow`
+
+🔁 Output:
+```
+Task 1
+Task 2
+Task 1
+Task 2
+...
 ```
 
-```c
-void StartTask2(void *argument) {
-    for (;;) {
-        printf("Task 2\n");
-        osDelay(1000);
-        osThreadTerminate(Task1Handle); // Terminates Task1 after the first run
-    }
-}
-```
-
-Output is printed over **ITM debug channel (SWO)** using `printf()` mapped to `ITM_SendChar()` via `syscalls.c`.
+This shows standard preemption, where the higher-priority task (`Task1`) always runs first but still shares CPU time thanks to `osDelay()`.
 
 ---
 
-## 🧠 Why FreeRTOS?
+### ✅ Scenario 2: Task2 Has Higher Priority
 
-This project highlights why using an RTOS like FreeRTOS provides major advantages:
+- `Task1`: `osPriorityLow`  
+- `Task2`: `osPriorityNormal`
+
+🔁 Output:
+```
+Task 2
+Task 1
+Task 2
+Task 1
+...
+```
+
+Changing just the task priorities reverses the order of execution — showing the power of the scheduler without changing any task logic.
+
+---
+
+### ✅ Scenario 3: Task1 Is Terminated by Task2
+
+- `Task1`: Any priority  
+- `Task2`: Any priority  
+- `Task2` contains: `osThreadTerminate(Task1Handle);`
+
+🔁 Output:
+```
+Task 1
+Task 2
+Task 2
+Task 2
+...
+```
+
+Here, `Task2` terminates `Task1` after the first run, demonstrating **dynamic runtime control** between tasks.
+
+---
+
+## 💻 Output Configuration
+
+All `printf()` output is routed through **SWO (Serial Wire Output)** using `ITM_SendChar()` defined in `syscalls.c`.
+
+To view output in **STM32CubeIDE**:
+1. Enable SWV trace.
+2. Open the **SWV ITM Console**.
+3. Enable Stimulus Port 0 (channel 0).
+4. Run the debugger and watch the real-time task activity.
+
+---
+
+## 🧠 Why Use FreeRTOS?
+
+This project illustrates key advantages of using an RTOS:
 
 | Feature                  | Bare-Metal | FreeRTOS |
 |--------------------------|------------|----------|
-| Multiple concurrent tasks | ❌ No       | ✅ Yes    |
+| Concurrent task handling | ❌ No       | ✅ Yes    |
 | Task priority control     | ❌ No       | ✅ Yes    |
-| Clean code organization   | ❌ Usually messy | ✅ Tasks stay modular |
-| Runtime task termination  | ❌ Manual logic | ✅ Built-in |
+| Runtime task termination  | ❌ Manual workaround | ✅ Built-in |
+| Code modularity           | ❌ Messy    | ✅ Structured |
 
-Even with just two tasks, this project demonstrates how FreeRTOS gives you **greater control, flexibility, and maintainability** in embedded systems development.
+Even with only two tasks, the flexibility and clarity FreeRTOS provides makes it ideal for robust embedded system design.
 
 ---
 
-## 📄 License
+## 📘 License
 
-This project uses code generated by STM32CubeMX and may contain code under the STMicroelectronics license.
-
-MIT License applies to all original contributions unless otherwise stated.
+This project is released under the [MIT License](LICENSE).
