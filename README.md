@@ -1,4 +1,4 @@
-# 🧠 FreeRTOS Task Scheduling Demo – STM32F303RE
+# 🔍 FreeRTOS Task Scheduling Demo – STM32F303RE
 
 This project showcases the power of **FreeRTOS** on the STM32F303RE Nucleo board. It demonstrates how real-time operating systems enable multitasking and priority-based scheduling — capabilities that are difficult or impossible to achieve in bare-metal embedded systems.
 
