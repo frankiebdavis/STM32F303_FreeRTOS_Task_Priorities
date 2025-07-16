@@ -118,7 +118,3 @@ This project illustrates key advantages of using an RTOS:
 Even with only two tasks, the flexibility and clarity FreeRTOS provides makes it ideal for robust embedded system design.
 
 ---
-
-## 📘 License
-
-This project is released under the [MIT License](LICENSE).
