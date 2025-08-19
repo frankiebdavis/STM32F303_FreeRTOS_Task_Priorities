@@ -1,4 +1,4 @@
-# 🔍 FreeRTOS Task Scheduling Demo — STM32F303RE
+# 🔍 FreeRTOS Task Scheduling Demo
 
 A compact **FreeRTOS** demo on the **STM32F303RE Nucleo** that highlights real‑time **multitasking, priority‑based scheduling, and runtime task control**. Console output is streamed live over **SWO/ITM** using `printf`.
 
