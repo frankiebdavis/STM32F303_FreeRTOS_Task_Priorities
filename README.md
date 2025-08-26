@@ -1,16 +1,16 @@
-# 🔍 FreeRTOS Task Scheduling Demo
+# FreeRTOS Task Scheduling Demo
 
 A compact **FreeRTOS** demo on the **STM32F303RE Nucleo** that highlights real‑time **multitasking, priority‑based scheduling, and runtime task control**. Console output is streamed live over **SWO/ITM** using `printf`.
 
 ---
 
-## ❓ Problem
+## Problem
 
 How can a microcontroller run **multiple tasks concurrently**, enforce **priority‑based scheduling**, and allow one task to **terminate another** — without complex bare‑metal state machines?
 
 ---
 
-## 🔨 Method
+## Method
 
 - **Two Tasks:** `Task1` and `Task2` created with `osThreadNew()`.
 - **Scheduler Control:** `osDelay()` yields CPU time so the RTOS can preempt/schedule fairly.
@@ -20,7 +20,7 @@ How can a microcontroller run **multiple tasks concurrently**, enforce **priorit
 
 ---
 
-## ✅ Result
+## Result
 
 Three scenarios make scheduling behavior obvious in the console:
 
@@ -52,7 +52,7 @@ These confirm **priority‑based scheduling**, **cooperative multitasking via de
 
 ---
 
-## 🔧 Hardware
+## Hardware
 
 - **STM32F303RE** Nucleo board  
 - **ST‑Link** (power / program / debug)  
@@ -60,7 +60,7 @@ These confirm **priority‑based scheduling**, **cooperative multitasking via de
 
 ---
 
-## 💻 SWO/ITM Output Setup (CubeIDE)
+## SWO/ITM Output Setup (CubeIDE)
 
 1. Start a Debug session.  
 2. Open **SWV ITM Console**.  
@@ -69,7 +69,7 @@ These confirm **priority‑based scheduling**, **cooperative multitasking via de
 
 ---
 
-## 🧠 Takeaways (Recruiter‑Friendly)
+## Takeaways (Recruiter‑Friendly)
 
 - Shows **RTOS fundamentals**: preemption, priorities, and task lifecycle control.  
 - Cleaner, modular design vs. bare‑metal superloops.  
